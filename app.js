@@ -2,18 +2,42 @@ var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
+var session=require('express-session');
+var MongoStore=require('connect-mongo')(session);
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 //加载路由文件  routes文件夹用来存放路由文件
 var index = require('./routes/index');
 var users = require('./routes/users');
 var articles = require('./routes/articles');
+var config=require('./dbconfig');
 
 var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
+//app.set('view engine', 'ejs');
+
+app.set('view engine','html');
+app.engine('html',require('ejs').__express);
+
+//解析session
+app.use(cookieParser());
+app.use(session({
+  secret:'zkingblog',//加密cookie,防止cookie被篡改
+  resave:true,//表示每次请求处理完毕后都更新session数据
+  cookie:{maxAge:1000*60*30},//设置session有效时间为30分钟
+  saveUninitialized:true,//保存新创建但是会初始化的session
+  //把session的信息保存到数据库中
+  store: new MongoStore({url: config.dburl})
+}));
+
+//由于需要给每个页面在渲染时传递session中保存的user对象,所以可以添加一个中间件,专门处理
+//session的问题
+app.use(function(req,res,next){
+  res.locals.user=req.session.user;
+  next();
+});
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));

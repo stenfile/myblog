@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var models=require('../db/model.js');
 var utils=require('../utils.js');
-
+var auth=require('../middleware/autoauth');
 
 /* GET user listing. */
 router.get('/', function(req, res, next) {
@@ -12,7 +12,7 @@ router.get('/', function(req, res, next) {
 /**
  * 用户注册
  */
-router.get('/reg', function (req, res) {
+router.get('/reg',auth.checkNotLogin, function (req, res) {
   res.render('user/reg', {title: '用户注册'});
 });
 
@@ -54,7 +54,7 @@ router.post('/reg', function (req, res,next) {
 /**
  * 显示用户登录表单
  */
-router.get('/login', function (req, res) {
+router.get('/login',auth.checkNotLogin, function (req, res) {
   res.render('user/login', {title: '登录'});
 });
 
@@ -68,6 +68,8 @@ router.post('/login', function (req, res) {
     password:utils.md5(user.password)}, function (err, doc) {
     if(doc){
       //如果doc存在,那么就是登录成功
+      //登陆成功后,将用户的信息放入session保存
+      req.session.user=doc;
       res.redirect('/')
     }else{
       //如果doc不存在,那么就是登录失败
@@ -76,8 +78,9 @@ router.post('/login', function (req, res) {
   });
 });
 
-router.get('/logout', function (req, res) {
-  res.send('退出登录页面')
+router.get('/logout',auth.checkLogin, function (req, res) {
+  req.session.user=null;
+  res.redirect('/')
 });
 
 module.exports = router;
