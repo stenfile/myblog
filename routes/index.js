@@ -1,10 +1,16 @@
 var express = require('express');
-//¼ÓÔØexpressµÄÂ·ÓÉÄ£¿é
+//åŠ è½½expressçš„è·¯ç”±æ¨¡å—
 var router = express.Router();
+var models=require('../db/model.js');
+
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'MY' });
+
+  models.Article.find({}).populate('user').exec(function (err, articles) {
+    res.render('index', { title: 'Stençš„åšå®¢',articles:articles });
+  });
+
 });
 
 module.exports = router;

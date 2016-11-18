@@ -1,23 +1,24 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title><%= title %></title>
-  <link rel='stylesheet' href='../public/stylesheets/style.css' />
-</head>
-<body>
-<!--<h1><%= title %></h1>-->
-<!--<p>Welcome to <%= title %></p>-->
-
-<!--<img src="http://7xjf2l.com2.z0.glb.qiniucdn.com/homepage.jpg" class="img-responsive">-->
 <% include include/header.html%>
 <div class="container">
-  主页
+  <%=title%>
+
+  <%
+  articles.forEach(function(art){
+  %>
+
+  <div class="media">
+    <a class="media-left" href="#">
+      <img src='<%=art.user.avatar%>' alt="">
+    </a>
+    <div class="media-body">
+      <h4 class="media-heading"><%=art.title%></h4>
+      <%=art.content%>
+    </div>
+  </div>
+
+<%
+  });
+  %>
+
 </div>
 <% include include/footer.html%>
-
-
-</body>
-</html>
-
-
-

@@ -3,6 +3,7 @@ var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var session=require('express-session');
+var flash=require('connect-flash');
 var MongoStore=require('connect-mongo')(session);
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
@@ -17,9 +18,9 @@ var app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 //app.set('view engine', 'ejs');
-
 app.set('view engine','html');
 app.engine('html',require('ejs').__express);
+
 
 //解析session
 app.use(cookieParser());
@@ -31,11 +32,14 @@ app.use(session({
   //把session的信息保存到数据库中
   store: new MongoStore({url: config.dburl})
 }));
+app.use(flash());
 
 //由于需要给每个页面在渲染时传递session中保存的user对象,所以可以添加一个中间件,专门处理
 //session的问题
 app.use(function(req,res,next){
   res.locals.user=req.session.user;
+  res.locals.success=req.flash('success');
+  res.locals.error=req.flash('error');
   next();
 });
 
