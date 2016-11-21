@@ -12,13 +12,16 @@ mongoose.connect(dbconfig.dburl);
         password:String,
         email:{type:String,default:''},
         avatar:{type:String},
-        createTime:{type:Date,default:new Date().now}
+        createTime:{type:Date,default:Date.now}
     });
 exports.User=mongoose.model('userinfo',userSchema);
 var articleSchema=new mongoose.Schema({
     title:String,
     user:{type:ObjectId,ref:'userinfo'},
     content:String,
-    createTime:{type:Date,default:new Date().now}
+    img:String,
+    pv: {type:Number,default:0},
+    comments: [{user:{type:ObjectId,ref:'userinfo'},content:String,createAt:{type: Date, default: Date.now}}],
+    createTime:{type:Date,default:Date.now}
 });
 exports.Article=mongoose.model('article',articleSchema);

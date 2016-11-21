@@ -35,8 +35,11 @@ router.post('/reg',auth.checkNotLogin, function (req, res,next) {
         //没有值才能够注册
         models.User.create(
             //脱库攻击
-            {username:user.username, password:utils.md5(user.password),
-          email:user.email,avatar:'https://s.gravatar.com/avatar/'+utils.md5(user.email)+'?s=80'}, function (err, doc) {
+            {username:user.username,
+             password:utils.md5(user.password),
+             email:user.email,
+             avatar:'https://s.gravatar.com/avatar/'+utils.md5(user.email)+'?s=80'
+            }, function (err, doc) {
           if(err){
             req.flash('error','注册失败请稍后再试');
             res.redirect('/user/reg')

@@ -1,24 +1,38 @@
 <% include include/header.html%>
-<div class="container">
-  <%=title%>
 
+<h1><%=title%></h1>
   <%
   articles.forEach(function(art){
   %>
-
+<div class="container col-sm-6" style="margin-top: 10px;">
+  <h4 class="media-heading"><a href="/article/detail/<%=art._id%>"><%=art.title%></a></h4>
   <div class="media">
     <a class="media-left" href="#">
       <img src='<%=art.user.avatar%>' alt="">
     </a>
     <div class="media-body">
-      <h4 class="media-heading"><%=art.title%></h4>
-      <%=art.content%>
+      <h3><%-art.content%></h3>
+      <p><%=art.createTime.toLocaleString()%></p>
+      阅读：<%= art.pv %>
+      |
+      评论：<%= art.comments.length%>
     </div>
   </div>
+</div>
 
 <%
   });
   %>
 
-</div>
+<nav class="col-md-offset-4" style="position: fixed;bottom: 20px;">
+  <ul class="pagination">
+    <%
+    for(var i=1;i<=totalPage;i++){
+    %>
+    <li><a href="/article/list/<%=i%>/<%=pageSize%>?keyword=<%=keyword%>"><%=i%></a></li>
+    <%
+    }
+    %>
+  </ul>
+</nav>
 <% include include/footer.html%>

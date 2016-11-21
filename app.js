@@ -1,5 +1,6 @@
 var express = require('express');
 var path = require('path');
+var fs = require('fs');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var session=require('express-session');
@@ -40,6 +41,24 @@ app.use(function(req,res,next){
   res.locals.user=req.session.user;
   res.locals.success=req.flash('success');
   res.locals.error=req.flash('error');
+  res.locals.keyword=req.flash('keyword');
+  next();
+});
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  res.render("404");
+});
+
+//正常日志
+var accessLog = fs.createWriteStream('access.log', {flags: 'a'});
+app.use(logger('dev',{stream: accessLog}));
+
+//错误日志
+var errorLog = fs.createWriteStream('error.log', {flags: 'a'});
+app.use(function (err, req, res, next) {
+  var meta = '[' + new Date() + '] ' + req.url + '\n';
+  errorLog.write(meta + err.stack + '\n');
   next();
 });
 
